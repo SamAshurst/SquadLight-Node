@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const formatMessage = require("./utils/messages");
+const { userJoin, getCurrentUser, userLeave } = require("./utils/users");
 
 const app = express();
 const server = http.createServer(app);
@@ -13,30 +14,40 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-    socket.broadcast.emit("message", `${socket.id} connected`);
-    // when a user sends a message, broadcast it to all other users
-
+    // Eventlistener to join a room - no global room
     socket.on("joinRoom", (room) => {
-        const user = { username: socket.id, room };
+        const user = userJoin(socket.id, socket.id, room);
         socket.join(user.room);
 
+        // Emits a message when a user joins a room
         socket.broadcast
             .to(user.room)
             .emit("message", `${user.username} has joined the chat`);
-
-        socket.on("message", (message) => {
-            io.to(user.room).emit(
-                "message",
-                formatMessage(user.username, message)
-            );
-            io.to(user.room).emit("message", user);
-            // socket.broadcast.emit("message", formatMessage(socket.id, message));
-            // console.log("message", formatMessage(socket.id, message));
-        });
     });
 
-    socket.on("disconnect", (reason) => {
-        socket.broadcast.emit(`User disconnected (${reason})`);
+    // Listen for a message and emits to the room the user is in.
+    socket.on("message", (message) => {
+        const user = getCurrentUser(socket.id);
+        io.to(user.room).emit("message", formatMessage(user.username, message));
+    });
+
+    // Eventlistener to leave a room - emits a message when a user leaves the room
+    socket.on("leaveRoom", () => {
+        const user = userLeave(socket.id);
+        io.to(user.room).emit("message", `${user.username} has left the chat`);
+        socket.leave(user.room);
+    });
+
+    // Emits a message when a user disconnects
+    socket.on("disconnect", () => {
+        const user = userLeave(socket.id);
+
+        if (user) {
+            io.to(user.room).emit(
+                "message",
+                `${user.username} has left the chat`
+            );
+        }
     });
 });
 
