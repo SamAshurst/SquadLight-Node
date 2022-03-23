@@ -24,6 +24,14 @@ io.on("connection", (socket) => {
             .to(user.room)
             .emit("message", `${user.username} has joined the chat`);
     });
+    socket.on("pingLocation", (location) => {
+        const user = getCurrentUser(socket.id);
+        socket.broadcast.to(user.room).emit("location", {
+            username: user.username,
+            Lat: location.Lat,
+            Lng: location.Lng,
+        });
+    });
 
     // Listen for a message and emits to the room the user is in.
     socket.on("message", (message) => {
