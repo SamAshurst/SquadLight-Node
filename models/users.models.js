@@ -1,7 +1,18 @@
-const mongoose = require('mongoose');
-const db = require('../database/db');
-const Room = require("../database/roomScheme")
+const mongoose = require("mongoose");
+const db = require("../database/db");
+const Room = require("../database/roomScheme");
 
-exports.createRoom = async () => {
-    console.log(Room.find());
-}
+exports.createRoom = async ({ id, username, room }) => {
+    const newRoom = new Room({
+        id: room,
+        ownerId: id,
+        occupants: [
+            {
+                userId: id,
+                username,
+            },
+        ],
+    });
+
+    newRoom.save();
+};
