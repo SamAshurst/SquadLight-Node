@@ -19,6 +19,7 @@
     "test": "jest",
     "prepare": "husky install",
     "seed": "node database/seed.js",
-    "resetCollection": "node database/resetCollection.js"
+    "resetCollection": "node database/resetCollection.js",
+    "start": "node server.js"
   }
 }
