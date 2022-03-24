@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 const db = require("../database/db");
 const User = require("../database/userScheme");
 
@@ -13,6 +14,12 @@ exports.createUser = async ({ id, username, room }) => {
     return createdUser;
 };
 
-exports.removeUser = async () => {
-    
-}
+exports.findUser = async (id) => {
+    const foundUser = await User.find({ id });
+    return foundUser[0];
+};
+
+exports.removeUser = async (id) => {
+    const dropUser = await User.deleteOne({ id });
+    return dropUser;
+};
