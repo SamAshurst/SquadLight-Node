@@ -1,17 +1,18 @@
 const db = require("../database/db");
-const Room = require("../database/roomScheme");
+const User = require("../database/userScheme");
 
-exports.createRoom = async ({ id, username, room }) => {
-    const newRoom = new Room({
-        id: room,
-        ownerId: id,
-        occupants: [
-            {
-                userId: id,
-                username,
-            },
-        ],
+exports.createUser = async ({ id, username, room }) => {
+    const newUser = new User({
+        id,
+        username,
+        roomId: room,
     });
 
-    newRoom.save();
+    const createdUser = await newUser.save();
+
+    return createdUser;
 };
+
+exports.removeUser = async () => {
+    
+}
