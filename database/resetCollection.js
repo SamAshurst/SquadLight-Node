@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
-const Room = require("./roomScheme")
+const User = require("./userScheme")
 
-const resetRooms = async () => {
+const resetUsers = async () => {
     await mongoose.connect("mongodb://localhost:27017/squadLightDb", {
         useNewUrlParser: true,
     });
     
-    await Room.deleteMany({});
+    await User.deleteMany({});
 
     await mongoose.connection.close();
 }
 
-resetRooms();
+resetUsers();

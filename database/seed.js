@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
-const Room = require("./roomScheme")
+const User = require("./userScheme")
 
 const seedDatabases = async () => {
     await mongoose.connect("mongodb://localhost:27017/squadLightDb", {
         useNewUrlParser: true,
     });
 
-    await Room.createCollection();
+    await User.createCollection();
 
     await mongoose.connection.close();
 
@@ -14,7 +14,7 @@ const seedDatabases = async () => {
         useNewUrlParser: true,
     });
 
-    await Room.createCollection();
+    await User.createCollection();
 
     await mongoose.connection.close();
 };
