@@ -1,28 +1,29 @@
-const {createRoom} = require('../models/users.models')
-
-const users = [];
+const { createUser, findUser, removeUser } = require("../models/users.models");
 
 // Join user to chat
-function userJoin(id, username, room) {
+async function userJoin(id, username, room) {
     const user = { id, username, room };
 
-    users.push(user);
-    createRoom(user);
+    const createdUser = await createUser(user);
 
-    return user;
+    return createdUser;
 }
 
 // Get current user
-function getCurrentUser(id) {
-    return users.find((user) => user.id === id);
+async function getCurrentUser(id) {
+    const foundUser = await findUser(id);
+
+    return foundUser;
 }
 
 // User leaves chat
-function userLeave(id) {
-    const index = users.findIndex((user) => user.id === id);
+async function userLeave(id) {
+    const foundUser = await findUser(id);
 
-    if (index !== -1) {
-        return users.splice(index, 1)[0];
+    const dropUser = await removeUser(id);
+
+    if (dropUser.deletedCount === 1) {
+        return foundUser;
     }
     return null;
 }

@@ -15,20 +15,20 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
     // Eventlistener to join a room - no global room
-    socket.on("joinRoom", (room) => {
-        const user = userJoin(socket.id, socket.id, room);
-        socket.join(user.room);
+    socket.on("joinRoom", async (room) => {
+        const createdUser = await userJoin(socket.id, socket.id, room);
+        socket.join(createdUser.roomId);
 
         // Emits a message when a user joins a room
         socket.broadcast
-            .to(user.room)
-            .emit("message", `${user.username} has joined the chat`);
+            .to(createdUser.roomId)
+            .emit("message", `${createdUser.username} has joined the chat`);
     });
 
     // Listens for pingLocation and emits location back to users in the room
-    socket.on("pingLocation", (location) => {
-        const user = getCurrentUser(socket.id);
-        socket.broadcast.to(user.room).emit("location", {
+    socket.on("pingLocation", async (location) => {
+        const user = await getCurrentUser(socket.id);
+        socket.broadcast.to(user.roomId).emit("location", {
             username: user.username,
             Lat: location.Lat,
             Lng: location.Lng,
@@ -36,24 +36,21 @@ io.on("connection", (socket) => {
     });
 
     // Listen for a message and emits to the room the user is in.
-    socket.on("message", (message) => {
-        const user = getCurrentUser(socket.id);
-        io.to(user.room).emit("message", formatMessage(user.username, message));
-    });
+    socket.on("message", async (message) => {
+        const user = await getCurrentUser(socket.id);
 
-    // Eventlistener to leave a room - emits a message when a user leaves the room
-    socket.on("leaveRoom", () => {
-        const user = userLeave(socket.id);
-        io.to(user.room).emit("message", `${user.username} has left the chat`);
-        socket.leave(user.room);
+        io.to(user.roomId).emit(
+            "message",
+            formatMessage(user.username, message)
+        );
     });
 
     // Emits a message when a user disconnects
-    socket.on("disconnect", () => {
-        const user = userLeave(socket.id);
+    socket.on("disconnect", async () => {
+        const user = await userLeave(socket.id);
 
         if (user) {
-            io.to(user.room).emit(
+            io.to(user.roomId).emit(
                 "message",
                 `${user.username} has left the chat`
             );
@@ -65,3 +62,13 @@ server.listen(3000, () => {
     // eslint-disable-next-line no-console
     console.log("listening on *:3000");
 });
+
+// // Eventlistener to leave a room - emits a message when a user leaves the room
+// socket.on("leaveRoom", async () => {
+//     const user = await userLeave(socket.id);
+//     io.to(user.roomId).emit(
+//         "message",
+//         `${user.username} has left the chat`
+//     );
+//     socket.leave(user.roomId);
+// });
