@@ -57,10 +57,7 @@ io.on("connection", (socket) => {
     });
 });
 
-server.listen(3000, () => {
-    // eslint-disable-next-line no-console
-    console.log("listening on *:3000");
-});
+server.listen(process.env.PORT || 5000);
 
 // // Eventlistener to leave a room - emits a message when a user leaves the room
 // socket.on("leaveRoom", async () => {
