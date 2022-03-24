@@ -9,7 +9,8 @@ const server = http.createServer(app);
 
 const io = new Server(server);
 
-app.get("/", () => {
+app.get("/", (req, res) => {
+    res.status(200).json({name: 'SquadLight API'});
 });
 
 io.on("connection", (socket) => {
