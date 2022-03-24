@@ -7,7 +7,12 @@ require("dotenv").config({
 
 const MONGO_HOSTNAME = "127.0.0.1";
 const MONGO_PORT = "27017";
+let url;
 
-const url = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${process.env.MONGO_DB}`;
+if (ENV === 'production') {
+    url = "mongodb+srv://squadLight:wZcmjv84NcUIVwgp@squadlight.iuvow.mongodb.net/squadLight?retryWrites=true&w=majority"
+} else {
+    url = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${process.env.MONGO_DB}`;
+}
 
 mongoose.connect(url, { useNewUrlParser: true });
