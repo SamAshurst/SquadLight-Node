@@ -10,7 +10,7 @@ const MONGO_PORT = "27017";
 let url;
 
 if (ENV === 'production') {
-    url = "mongodb+srv://squadLight:wZcmjv84NcUIVwgp@squadlight.iuvow.mongodb.net/squadLight?retryWrites=true&w=majority"
+    url = process.env.MONGODB_URI
 } else {
     url = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${process.env.MONGO_DB}`;
 }
