@@ -15,8 +15,8 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
     // Eventlistener to join a room - no global room
-    socket.on("joinRoom", async (room) => {
-        const createdUser = await userJoin(socket.id, socket.id, room);
+    socket.on("joinRoom", async (room, username) => {
+        const createdUser = await userJoin(socket.id, username, room);
         socket.join(createdUser.roomId);
 
         // Emits a message when a user joins a room
