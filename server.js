@@ -39,8 +39,18 @@ io.on("connection", (socket) => {
     socket.on("message", async (message) => {
         const user = await getCurrentUser(socket.id);
 
-        io.to(user.roomId).emit(
+        socket.broadcast.to(user.roomId).emit(
             "message",
+            formatMessage(user.username, message)
+        );
+    });
+
+    // Listen for a emergency message and emits to the room the user is in.
+    socket.on("eMessage", async (message) => {
+        const user = await getCurrentUser(socket.id);
+
+        socket.broadcast.to(user.roomId).emit(
+            "eMessage",
             formatMessage(user.username, message)
         );
     });
