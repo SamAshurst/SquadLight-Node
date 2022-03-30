@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.get("/", (req, res) => {
-    res.status(200).json({name: 'SquadLight API'});
+    res.status(200).json({ name: "SquadLight API" });
 });
 
 io.on("connection", (socket) => {
@@ -40,20 +40,26 @@ io.on("connection", (socket) => {
     socket.on("message", async (message) => {
         const user = await getCurrentUser(socket.id);
 
-        socket.broadcast.to(user.roomId).emit(
-            "message",
-            formatMessage(user.username, message)
-        );
+        socket.broadcast
+            .to(user.roomId)
+            .emit("message", formatMessage(user.username, message));
     });
 
     // Listen for a emergency message and emits to the room the user is in.
     socket.on("eMessage", async (message) => {
         const user = await getCurrentUser(socket.id);
 
-        socket.broadcast.to(user.roomId).emit(
-            "eMessage",
-            formatMessage(user.username, message)
-        );
+        socket.broadcast
+            .to(user.roomId)
+            .emit("eMessage", formatMessage(user.username, message));
+    });
+
+    socket.on("alert", async (message) => {
+        const user = await getCurrentUser(socket.id);
+
+        socket.broadcast
+            .to(user.roomId)
+            .emit("eMessage", formatMessage("System", message));
     });
 
     // Emits a message when a user disconnects

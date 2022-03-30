@@ -2,7 +2,8 @@ const moment = require("moment");
 
 function formatMessage(username, text) {
     return {
-        username,
+        // eslint-disable-next-line object-shorthand
+        username: username,
         text,
         time: moment().format("h:mm a"),
     };
