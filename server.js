@@ -29,6 +29,7 @@ io.on("connection", (socket) => {
     socket.on("pingLocation", async (location) => {
         const user = await getCurrentUser(socket.id);
         socket.broadcast.to(user.roomId).emit("location", {
+            id: socket.id,
             username: user.username,
             Lat: location.Lat,
             Lng: location.Lng,
